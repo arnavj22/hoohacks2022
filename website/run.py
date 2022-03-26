@@ -4,25 +4,59 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
+from threading import Thread
+import datetime, time
+global rec, rec_frame, out
+rec = False
 
 app = Flask(__name__)
-
 camera = cv2.VideoCapture(0)  # use 0 for web camera
-
+def record(out):
+    global rec_frame
+    while(rec):
+        time.sleep(0.05)
+        out.write(rec_frame)
 def gen_frames():  # generate frame by frame from camera
+    global out, rec_frame
     while True:
         # Capture frame-by-frame
         success, frame = camera.read()  # read the camera frame
-        if not success:
-            break
-        else:
-            ret, buffer = cv2.imencode('.jpg', frame)
+        if(rec):
+            rec_frame=frame
+            frame= cv2.putText(cv2.flip(frame,1),"Recording", (0,25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255),4)
+            frame = cv2.flip(frame,1)
+        try:
+            ret, buffer = cv2.imencode('.jpg', cv2.flip(frame,1))
             frame = buffer.tobytes()
             yield (b'--frame\r\n'
-                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  # concat frame one by one and show result
-@app.route('/stream')
+                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+        except Exception as e:
+            pass
+                
+        else:
+            pass
+@app.route('/video_feed')
 def video_feed():
     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+@app.route('/requests',methods=['POST','GET'])
+def tasks():
+    global camera
+    if request.method == 'POST':
+        if  request.form.get('rec') == 'Start/Stop Recording':
+            global rec, out
+            rec= not rec
+            if(rec):
+                now=datetime.datetime.now() 
+                fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+                out = cv2.VideoWriter('output.mp4', fourcc, 20.0, (int(camera.get(3)),int(camera.get(4))))
+                #Start new thread for recording the video
+                thread = Thread(target = record, args=[out,])
+                thread.start()
+            elif(rec==False):
+                out.release()
+    elif request.method=='GET':
+        return render_template('analyzepushup.html')
+    return render_template('analyzepushup.html')
 @app.route('/analyzesitup')
 def asu():
     return render_template('analyzesitup.html')
@@ -47,4 +81,4 @@ def home():
     return render_template('index.html')
 
 if __name__ == '__main__':
-     app.run(host = '127.0.0.1', port = 5000)
+     app.run(host = '127.0.0.1', port = 5000, threaded = True)
