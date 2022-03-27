@@ -2,7 +2,6 @@ import cv2
 import mediapipe as mp
 import matplotlib.pyplot as plt
 import math
-from matplotlib.scale import NaturalLogTransform
 mp_pose = mp.solutions.pose
 mp_drawing = mp.solutions.drawing_utils 
 mp_drawing_styles = mp.solutions.drawing_styles
@@ -47,8 +46,9 @@ def resize_and_show(image, title=None, filename = None):
         img = cv2.resize(image, (DESIRED_WIDTH, math.floor(h/(w/DESIRED_WIDTH))))
     else:
         img = cv2.resize(image, (math.floor(w/(h/DESIRED_HEIGHT)), DESIRED_HEIGHT))
-  # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    cv2.imwrite("graphs/" + filename, img)
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    cv2.putText(img,title, (0,25), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0,0,255),2)
+    cv2.imwrite("static/graphs/" + filename, img)
 #   plt.title(title)
 #   plt.axis(False)
 #   plt.imshow(img); plt.show()
@@ -70,7 +70,7 @@ def show_marks(image, title=None, filename = None):
         results.pose_landmarks,
         mp_pose.POSE_CONNECTIONS,
         landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
-    resize_and_show(annotated_image, title=title, filename = filename)
+    resize_and_show(annotated_image, title='student is ' + title, filename = filename)
 # Run MediaPipe Pose and draw pose landmarks.
 def get_key_landmarks(frame):
   with mp_pose.Pose(
@@ -115,8 +115,8 @@ def pushups():
         if abs(frames[switchIdx[i]]['l_shoulder'][2]) > abs(frames[switchIdx[i]]['l_elbow'][2]) or abs(frames[switchIdx[i]]['r_shoulder'][2]) > abs(frames[switchIdx[i]]['r_elbow'][2]):
             message = 'not going down far enough'
         else:
-            message = 'Nice Form'
-        show_marks(imgs[switchIdx[i]], title=f'Pose Estimation Results 00:01:15: {message}',  filename = "pushups" + str(i + 1) + ".png")
+            message = 'having good form'
+        show_marks(imgs[switchIdx[i]], title=message,  filename = "pushups" + str(i + 1) + ".png")
 def squats():
     frames, imgs = vid_to_frames()
     topFrame, topIdx = frames[0], 0
@@ -141,13 +141,15 @@ def squats():
     bottomFrame.append(topFrame)
     bottomIdx.append(topIdx)
     for i, frame in enumerate(bottomFrame):
-        plt.imshow(imgs[bottomIdx[i]])
-        plt.show()
+        # plt.imshow(imgs[bottomIdx[i]])
+        # plt.show()
+        message = ""
         if frames[bottomIdx[i]]['l_knee'][0]+0.05 < frames[bottomIdx[i]]['l_foot'][0]:
             message = 'too far forward'
+            show_marks(imgs[bottomIdx[i]], title=message, filename = "squats" + str(i + 1) + ".png")
         if frames[bottomIdx[i]]['r_hip'][2] + 0.06 > frames[bottomIdx[i]]['r_knee'][2]:
             message = 'not going down far enough'
-        show_marks(imgs[bottomIdx[i]], title=f'Pose Estimation Results 00:01:15: {message}', filename = "squats" + str(i + 1) + ".png")
+            show_marks(imgs[bottomIdx[i]], title=message, filename = "squats" + str(i + 1) + ".png")
 
 def get_feats(frame):
   with mp_pose.Pose(
@@ -227,4 +229,71 @@ def curl_ups():
         dtls = capFrames[comp[i][1]]
         if dtls['l_knee'][0]+0.05 < dtls['l_wrist'][0]:
             message = 'not going far enough'
-            show_marks(capImages[comp[i][1]], title=f'Pose Estimation Results: {message}', filename = "curlups" + str(i + 1) + ".png")
+            show_marks(capImages[comp[i][1]], title=message, filename = "curlups" + str(i + 1) + ".png")
+def read_biceps():
+    bc = cv2.VideoCapture("ouput.mp4")
+
+    bci, bcf = [], []
+    count = 0
+
+    if bc.isOpened():
+        width = int(bc.get(cv2.CAP_PROP_FRAME_WIDTH))
+        height = int(bc.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+        res=(int(width), int(height))
+
+        frame = None
+        while True:
+            
+            try:
+                is_success, frame = bc.read()
+            except cv2.error:
+                continue
+            if not is_success:
+                break
+
+            image = cv2.cvtColor(frame[:, 160:480], cv2.COLOR_BGR2RGB)
+            bci.append(image)
+            bcf.append(get_feats(image))
+            plt.imshow(image); plt.show()
+            count += 15
+            bc.set(cv2.CAP_PROP_POS_FRAMES, count)
+
+    cleaned = [i for i, val in enumerate(bcf) if val != 'idfk']
+    bcImages = [bci[i] for i in cleaned]
+    bcFrames = [bcf[i] for i in cleaned]
+    bc.release()
+    return bcImages, bcFrames
+def distance(x1, y1, z1, x2, y2, z2):
+  return (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) + (z2-z1)*(z2-z1)
+def bicepcurls():
+    bcImages, bcFrames = read_biceps()
+    rep1 = [0, 3, 6]
+    rep2 = [6, 9, 12]
+    rep3 = [12, 15, 21]
+    rep4 = [21, 24, 27]
+    rep5 = [27, 29, 28]
+    rep6 = [0, 1, 6]
+    reps = [rep1, rep2, rep3, rep4, rep5, rep6]
+    for i, rep in enumerate(reps):
+        initial = bcFrames[rep[0]]['l_elbow']
+        after = bcFrames[rep[1]]['l_elbow']
+        # fig = plt.figure(figsize=(10, 7))
+        # fig.add_subplot(1, 3, 1)
+        # plt.imshow(bcImages[rep[0]])
+        # fig.add_subplot(1, 3, 2)
+        # plt.imshow(bcImages[rep[1]])
+        # fig.add_subplot(1, 3, 3)
+        # plt.imshow(bcImages[rep[2]])
+        # plt.show()
+        hcon = cv2.hconcat([rep[0], rep[1], rep[2]])
+        if distance(initial[0], initial[1], 0, after[0], after[1], 0) > 0.05:
+            message = 'swinging elbows'
+        start = bcFrames[rep[0]]['l_wrist']
+        end = bcFrames[rep[2]]['l_wrist']
+        if abs(end[0] - start[0]) > 0.15:
+            message = 'not completely straightening arm after completing rep'
+            show_marks(hcon, title=message, filename = "bicepcurls" + str(i + 1) + ".png")
+        if abs(bcFrames[rep[0]]['l_wrist'][2] - bcFrames[rep[1]]['l_wrist'][2]) < 1:
+            message = 'not going high enough on the way up'
+            show_marks(hcon, title=message, filename = "bicepcurls" + str(i + 1) + ".png")

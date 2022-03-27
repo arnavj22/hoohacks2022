@@ -14,17 +14,20 @@ app = Flask(__name__)
 camera = cv2.VideoCapture(0)  # use 0 for web camera
 def pushup():
     pushups()
-    return render_template('analyzepushup.html')
+    return render_template('analyzepushup.html', data = {'done': 'done'})
 def situp():
-    return render_template('analyzesitup.html')
+    curl_ups()
+    return render_template('analyzesitup.html', data = {'done': 'done'})
 def jump():
-    return render_template('analyzejump.html')
+    return render_template('analyzejump.html', data = {'done': 'done'})
 def plank():
-    return render_template('analyzeplank.html')
+    return render_template('analyzeplank.html', data = {'done': 'done'})
 def squat():
-    return render_template('analyzesquats.html')
+    squats()
+    return render_template('analyzesquats.html', data = {'done': 'done'})
 def bicep():
-    return render_template('analyzebicep.html')
+    bicepcurls()
+    return render_template('analyzebicep.html', data = {'done': 'done'})
 
 def record(out):
     global rec_frame
@@ -115,7 +118,44 @@ def asq():
 @app.route('/features')
 def features():
     return render_template('features.html')
-
+	
+@app.route('/uploaderpushup', methods = ['GET', 'POST'])
+def uploadpu():
+    if request.method == 'POST':
+        f = request.files['file']
+        f.save("output.mp4")
+        return pushup()
+@app.route('/uploadersitup', methods = ['GET', 'POST'])
+def uploadsu():
+    if request.method == 'POST':
+        f = request.files['file']
+        f.save("output.mp4")
+        return situp()
+@app.route('/uploaderplank', methods = ['GET', 'POST'])
+def uploadp():
+    if request.method == 'POST':
+        f = request.files['file']
+        f.save("output.mp4")
+        return plank()
+@app.route('/uploaderbicep', methods = ['GET', 'POST'])
+def uploadbc():
+    if request.method == 'POST':
+        f = request.files['file']
+        f.save("output.mp4")
+        return bicep()
+@app.route('/uploaderjump', methods = ['GET', 'POST'])
+def uploadj():
+    if request.method == 'POST':
+        f = request.files['file']
+        f.save("output.mp4")
+        return jump()
+@app.route('/uploadersquat', methods = ['GET', 'POST'])
+def uploadsq():
+    if request.method == 'POST':
+        f = request.files['file']
+        f.save("output.mp4")
+        return squat()
+	
 @app.route('/')
 def home():
     return render_template('index.html')
