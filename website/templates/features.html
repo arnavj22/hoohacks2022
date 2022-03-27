@@ -42,81 +42,84 @@
         h1 {text-align: center;}
         p {text-align: center;}
         div {text-align: center;}
+        h2 {text-align: center;
+            vertical-align: middle;}
         img {
               display: block;
               margin-left: auto;
               margin-right: auto;
             }
-        #grad1 {
-                  /*height: 200px;*/
-                  background-image: radial-gradient(circle, white, red);
-                }
+        #grad1 {background-image: radial-gradient(circle, white, red);}
     </style>
     <div id='grad1'>
     <h1> Features </h1>
+    <br>
+    <br>
+    <br>
+    <hr>
     <div class="row">
         <div class="col-md-6">
-            <h3>Pushup Tracking</h3>
+            <h2>Pushup Tracking</h2>
         </div>
         <div class="col-md-3">
-            <p> Performs joint estimation to determine whether one's back is straight and if arms are bent to 90 degrees </p>
+            <p> We track joint movement in both the arms and back to ensure a student is bending their arms 90 degrees while their back is flat. </p>
             <img src="/static/images/pushup.jpeg" 
                  width=100
                  height=100/>
         </div>
     </div>
-
+    <hr>
     <div class="row">
         <div class="col-md-6">
-            <h3>Planks</h3>
+            <h2>Planks</h2>
         </div>
         <div class="col-md-3">
-            <p> Intelligently determines whether a student has proper plank position. </p>
+            <p> We use pose estimation to continuously monitor back posture and notify students when improper form sets in due to strain. </p>
             <img src="static/images/plank.png" 
                  width=100
                  height=100/>
         </div>
     </div>
-
+    <hr>
     <div class="row">
         <div class="col-md-6">
-            <h3>Curl Ups</h3>
+            <h2>Curl Ups</h2>
         </div>
         <div class="col-md-3">
-            <p> [text] </p>
+            <p> We employ PoseNet to monitor the relation between wrist and knees to identify whether legs are bent at the proper position and if a student is going up at the proper angle. </p>
             <img src="static/images/curlup.jpeg" 
                  width=100
                  height=100/>
         </div>
     </div>
-
+    <hr>
     <div class="row">
         <div class="col-md-6">
-            <h3>Bicep Curls</h3>
+            <h2>Bicep Curls</h2>
         </div>
         <div class="col-md-3">
-            <p> [text] </p>
+            <p> We track hand movements such that dumbbells are coming to the shoulder while analyzing shoulder movement to inform students about swaying. </p>
             <img src="static/images/bicep.jpg"
                  width=100
                  height=100/>
         </div>
     </div>
-
+    <hr>
     <div class="row">
         <div class="col-md-6">
-            <h3>Squats</h3>
+            <h2>Squats</h2>
         </div>
         <div class="col-md-3">
-            <p> [] </p>
+            <p> We perform pose estimation to find the relation knees and heels for proper form, hips to ensure students are going down all the way, and back posture to determine whether the curvature is straight.  </p>
             <img src="static/images/squat.png" 
                  width=100
                  height=100/>
         </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+    <hr>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
-        crossorigin="anonymous"></script>
+        crossorigin="anonymous"></script> -->
 </body>
 <footer class = "mt-auto">
     <p style = "text-align: center;">Developed by Arnav Jain, Sameer Gabbita, Sauman Das, Vishal Kotha
