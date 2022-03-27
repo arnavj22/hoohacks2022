@@ -6,6 +6,7 @@
 ### Web Development
 * https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/Advanced_text_formatting
 * https://www.w3schools.com/css/css3_gradients.asp
+* https://towardsdatascience.com/camera-app-with-flask-and-opencv-bd147f6c0eec
 
 ### Sample Exercise Videos
 * Curl Ups: https://www.youtube.com/watch?v=0cojYNqKprc
