@@ -46,7 +46,6 @@ def tasks():
             global rec, out
             rec= not rec
             if(rec):
-                now=datetime.datetime.now() 
                 fourcc = cv2.VideoWriter_fourcc(*'mp4v')
                 out = cv2.VideoWriter('output.mp4', fourcc, 20.0, (int(camera.get(3)),int(camera.get(4))))
                 #Start new thread for recording the video
@@ -72,6 +71,9 @@ def abc():
 @app.route('/analyzejump')
 def aj():
     return render_template('analyzejump.html')
+@app.route('/analyzesquats')
+def asq():
+    return render_template('analyzesquats.html')
 @app.route('/features')
 def features():
     return render_template('features.html')

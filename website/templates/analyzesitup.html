@@ -32,6 +32,7 @@
                         <li><a class="dropdown-item active" href="analyzesitup">Sit-Ups</a></li>
                         <li><a class="dropdown-item" href="analyzebicep">Bicep Curls</a></li>
                         <li><a class="dropdown-item" href="analyzejump">Jumping Jacks</a></li>
+                        <li><a class="dropdown-item" href="analyzesquats">Squats</a></li>
                     </ul>
                 </li>
             </ul>
@@ -44,6 +45,9 @@
         <div class="row">
             <div class="col-lg-8  offset-lg-2">
                 <h3 class="mt-5">Live Streaming</h3>
+                <form method="post" action="{{ url_for('tasks') }}">
+                    <input type="submit" value="Start/Stop Recording" name="rec" />
+                </form>
                 <img src="{{ url_for('video_feed') }}" width="100%">
             </div>
         </div>
