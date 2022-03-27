@@ -1,4 +1,4 @@
-# hoohacks2022
+# PET(Physical Education Tool)
 ## Inspiration
 The four of us on the team experienced a full year of virtual learning during our sophomore of high school. Perhaps the class that was impacted the most was Physical Education or PE. It was extremely difficult for the teacher to monitor students’ form during various exercises, especially when there were 30 videos playing simultaneously. As an alternate method for feedback, our teachers requested video submissions and provided personal comments. We realized that this process was very tedious for teachers and made it difficult for students to improve their form for difficult exercises. As a result, we thought of PET (Physical Education Tool), a method to automate the feedback a teacher would normally provide to a student.
 
