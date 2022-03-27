@@ -5,13 +5,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
 from threading import Thread
-import datetime, time
+import time
+from processing import *
 global rec, rec_frame, out
 rec = False
 
 app = Flask(__name__)
 camera = cv2.VideoCapture(0)  # use 0 for web camera
 def pushup():
+    pushups()
     return render_template('analyzepushup.html')
 def situp():
     return render_template('analyzesitup.html')
@@ -66,20 +68,32 @@ def tasks():
                 thread.start()
             elif(rec==False):
                 out.release()
+                if(request.form.get('rec').endswith('Pushup')):
+                    return pushup()
+                elif(request.form.get('rec').endswith('Situp')):
+                    return situp()
+                elif(request.form.get('rec').endswith('Jump')):
+                    return jump()
+                elif(request.form.get('rec').endswith('Plank')):
+                    return plank()
+                elif(request.form.get('rec').endswith('Squats')):
+                    return squat()
+                elif(request.form.get('rec').endswith('Bicep')):
+                    return bicep()
     elif request.method=='GET':
         return render_template('analyzepushup.html')
-    if(request.form.get('rec').endswith('Pushup')):
-        return pushup()
-    elif(request.form.get('rec').endswith('Situp')):
-        return situp()
-    elif(request.form.get('rec').endswith('Jump')):
-        return jump()
-    elif(request.form.get('rec').endswith('Plank')):
-        return plank()
-    elif(request.form.get('rec').endswith('Squats')):
-        return squat()
-    elif(request.form.get('rec').endswith('Bicep')):
-        return bicep()
+    if request.form.get('rec').endswith('Pushup'):
+        return apu()
+    elif request.form.get('rec').endswith('Situp'):
+        return asu()
+    elif request.form.get('rec').endswith('Jump'):
+        return aj()
+    elif request.form.get('rec').endswith('Plank'):
+        return apl()
+    elif request.form.get('rec').endswith('Squats'):
+        return asq()
+    return abc()
+   
 @app.route('/analyzesitup')
 def asu():
     return render_template('analyzesitup.html')

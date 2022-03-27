@@ -6,7 +6,7 @@ mp_pose = mp.solutions.pose
 mp_drawing = mp.solutions.drawing_utils 
 mp_drawing_styles = mp.solutions.drawing_styles
 def vid_to_frames():
-    cap = cv2.VideoCapture("simple_front_view.mp4")
+    cap = cv2.VideoCapture("output.mp4")
 
     imgs, frames = [], []
     count = 0
@@ -37,19 +37,20 @@ def vid_to_frames():
             count += 15
             cap.set(cv2.CAP_PROP_POS_FRAMES, count)
     cap.release()
-    return frames
+    return frames, imgs
 DESIRED_HEIGHT = 480
 DESIRED_WIDTH = 480
 def resize_and_show(image, title=None):
-  h, w = image.shape[:2]
-  if h < w:
-    img = cv2.resize(image, (DESIRED_WIDTH, math.floor(h/(w/DESIRED_WIDTH))))
-  else:
-    img = cv2.resize(image, (math.floor(w/(h/DESIRED_HEIGHT)), DESIRED_HEIGHT))
+    h, w = image.shape[:2]
+    if h < w:
+        img = cv2.resize(image, (DESIRED_WIDTH, math.floor(h/(w/DESIRED_WIDTH))))
+    else:
+        img = cv2.resize(image, (math.floor(w/(h/DESIRED_HEIGHT)), DESIRED_HEIGHT))
   # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-  plt.title(title)
-  plt.axis(False)
-  plt.imshow(img); plt.show()
+    cv2.imwrite("graphs/pushups.png", img)
+#   plt.title(title)
+#   plt.axis(False)
+#   plt.imshow(img); plt.show()
 
 def show_marks(image, title=None):
   # Run MediaPipe Pose and draw pose landmarks.
@@ -96,7 +97,7 @@ def get_key_landmarks(frame):
     except:
       return -1
 def pushups():
-    frames = vid_to_frames()
+    frames, imgs = vid_to_frames()
     topFrame, topIdx = frames[0], 0
     switchFrame, switchIdx = [], []
     for i, frame in enumerate(frames):
