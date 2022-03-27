@@ -51,13 +51,23 @@
             </div>
         </div>
     </div>
+    <br>
     <form action="uploaderpushup" method="POST" enctype="multipart/form-data" class = "center" style = "text-align: center;">
         <input type="file" name="file" />
         <input type="submit" />
     </form>
+    <br>
+    <p style="text-align: center;">
+        <input type="text" name="username" value="Teacher Feedback:                                                       "
+            readonly size="60">
+    </p>
+    
+    <br>
     {% if 'done' in data %}
         <div>
-            <img id="dat" src="/static/graphs/pushups3.png" width=480 height=400 class="center" />
+            <p style="text-align:center;">
+            <img id="dat" src="/static/graphs/pushups3.png" class="center" />
+            </p>
         </div>
     {% endif %}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
