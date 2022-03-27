@@ -21,6 +21,7 @@ def situp():
 def jump():
     return render_template('analyzejump.html', data = {'done': 'done'})
 def plank():
+    planked()
     return render_template('analyzeplank.html', data = {'done': 'done'})
 def squat():
     squats()

@@ -70,7 +70,7 @@ def show_marks(image, title=None, filename = None):
         results.pose_landmarks,
         mp_pose.POSE_CONNECTIONS,
         landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
-    resize_and_show(annotated_image, title='student is ' + title, filename = filename)
+    resize_and_show(annotated_image, title=title, filename = filename)
 # Run MediaPipe Pose and draw pose landmarks.
 def get_key_landmarks(frame):
   with mp_pose.Pose(
@@ -113,9 +113,9 @@ def pushups():
     for i, frame in enumerate(switchFrame):
         message = ""
         if abs(frames[switchIdx[i]]['l_shoulder'][2]) > abs(frames[switchIdx[i]]['l_elbow'][2]) or abs(frames[switchIdx[i]]['r_shoulder'][2]) > abs(frames[switchIdx[i]]['r_elbow'][2]):
-            message = 'not going down far enough'
+            message = 'Student is not going down far enough'
         else:
-            message = 'having good form'
+            message = 'Student is having good form'
         show_marks(imgs[switchIdx[i]], title=message,  filename = "pushups" + str(i + 1) + ".png")
 def squats():
     frames, imgs = vid_to_frames()
@@ -145,10 +145,10 @@ def squats():
         # plt.show()
         message = ""
         if frames[bottomIdx[i]]['l_knee'][0]+0.05 < frames[bottomIdx[i]]['l_foot'][0]:
-            message = 'too far forward'
+            message = 'Student is too far forward'
             show_marks(imgs[bottomIdx[i]], title=message, filename = "squats" + str(i + 1) + ".png")
         if frames[bottomIdx[i]]['r_hip'][2] + 0.06 > frames[bottomIdx[i]]['r_knee'][2]:
-            message = 'not going down far enough'
+            message = 'Student is not going down far enough'
             show_marks(imgs[bottomIdx[i]], title=message, filename = "squats" + str(i + 1) + ".png")
 
 def get_feats(frame):
@@ -228,10 +228,10 @@ def curl_ups():
         # plt.show()
         dtls = capFrames[comp[i][1]]
         if dtls['l_knee'][0]+0.05 < dtls['l_wrist'][0]:
-            message = 'not going far enough'
+            message = 'Student is not going far enough'
             show_marks(capImages[comp[i][1]], title=message, filename = "curlups" + str(i + 1) + ".png")
 def read_biceps():
-    bc = cv2.VideoCapture("ouput.mp4")
+    bc = cv2.VideoCapture("output.mp4")
 
     bci, bcf = [], []
     count = 0
@@ -255,7 +255,7 @@ def read_biceps():
             image = cv2.cvtColor(frame[:, 160:480], cv2.COLOR_BGR2RGB)
             bci.append(image)
             bcf.append(get_feats(image))
-            plt.imshow(image); plt.show()
+            # plt.imshow(image); plt.show()
             count += 15
             bc.set(cv2.CAP_PROP_POS_FRAMES, count)
 
@@ -286,14 +286,35 @@ def bicepcurls():
         # fig.add_subplot(1, 3, 3)
         # plt.imshow(bcImages[rep[2]])
         # plt.show()
-        hcon = cv2.hconcat([rep[0], rep[1], rep[2]])
+        hcon = cv2.hconcat([bcImages[rep[0]], bcImages[rep[1]], bcImages[rep[2]]])
         if distance(initial[0], initial[1], 0, after[0], after[1], 0) > 0.05:
-            message = 'swinging elbows'
+            message = 'Student is swinging elbows'
         start = bcFrames[rep[0]]['l_wrist']
         end = bcFrames[rep[2]]['l_wrist']
         if abs(end[0] - start[0]) > 0.15:
-            message = 'not completely straightening arm after completing rep'
+            message = 'Student is not completely straightening arm after completing rep'
             show_marks(hcon, title=message, filename = "bicepcurls" + str(i + 1) + ".png")
         if abs(bcFrames[rep[0]]['l_wrist'][2] - bcFrames[rep[1]]['l_wrist'][2]) < 1:
-            message = 'not going high enough on the way up'
+            message = 'Student is not going high enough on the way up'
             show_marks(hcon, title=message, filename = "bicepcurls" + str(i + 1) + ".png")
+def planked():
+    frames, imgs = vid_to_frames()
+    topFrame, topIdx = frames[0], 0
+    switchFrame, switchIdx = [], []
+    used = set()
+    for i, frame in enumerate(frames):
+        diff = frames[i]["r_shoulder"][0] - frames[i]["r_elbow"][0]
+        if diff < -0.012 and 'Student should move shoulders back' not in used:
+            message = 'Student should move shoulders back'
+        if diff > 0.012 and 'Student should move shoulders forward' not in used:
+            message = 'Student should move shoulders forward'
+        hip_to_shoulder = frames[i]["r_hip"][0] - frames[i]["r_shoulder"][0]
+        if hip_to_shoulder < -0.01 and 'Student is raising his/her back too high' not in used:
+            message = 'Student is raising his/her back too high'
+        if 0.4 > hip_to_shoulder > 0.2 and 'Student is slightly lowering his/her back' not in used:
+            message = 'Student is slightly lowering his/her back'
+        if hip_to_shoulder > 0.4 and 'Student is lowering his/her back too much' not in used:
+            message = 'Student is lowering his/her back too much'
+        if message not in used:
+            used.add(message)
+            show_marks(imgs[i], title=message, filename = "plank" + str(i + 1) + ".png")
