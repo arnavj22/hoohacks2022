@@ -11,6 +11,19 @@ rec = False
 
 app = Flask(__name__)
 camera = cv2.VideoCapture(0)  # use 0 for web camera
+def pushup():
+    return render_template('analyzepushup.html')
+def situp():
+    return render_template('analyzesitup.html')
+def jump():
+    return render_template('analyzejump.html')
+def plank():
+    return render_template('analyzeplank.html')
+def squat():
+    return render_template('analyzesquats.html')
+def bicep():
+    return render_template('analyzebicep.html')
+
 def record(out):
     global rec_frame
     while(rec):
@@ -42,7 +55,7 @@ def video_feed():
 def tasks():
     global camera
     if request.method == 'POST':
-        if  request.form.get('rec') == 'Start/Stop Recording':
+        if  request.form.get('rec').startswith('Start/Stop'):
             global rec, out
             rec= not rec
             if(rec):
@@ -55,7 +68,18 @@ def tasks():
                 out.release()
     elif request.method=='GET':
         return render_template('analyzepushup.html')
-    return render_template('analyzepushup.html')
+    if(request.form.get('rec').endswith('Pushup')):
+        return pushup()
+    elif(request.form.get('rec').endswith('Situp')):
+        return situp()
+    elif(request.form.get('rec').endswith('Jump')):
+        return jump()
+    elif(request.form.get('rec').endswith('Plank')):
+        return plank()
+    elif(request.form.get('rec').endswith('Squats')):
+        return squat()
+    elif(request.form.get('rec').endswith('Bicep')):
+        return bicep()
 @app.route('/analyzesitup')
 def asu():
     return render_template('analyzesitup.html')
